@@ -1,3 +1,3 @@
 mod health;
 
-pub use health::version;
+pub use health::health_check;

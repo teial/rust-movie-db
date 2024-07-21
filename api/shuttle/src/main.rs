@@ -14,6 +14,8 @@ async fn main(#[Postgres] pool: sqlx::PgPool) -> shuttle_axum::ShuttleAxum {
         .map_err(CustomError::new)?;
 
     let state = Arc::new(pool);
-    let router = Router::new().route("/version", get(api_lib::version)).with_state(state);
+    let router = Router::new()
+        .route("/health", get(api_lib::health_check))
+        .with_state(state);
     Ok(router.into())
 }
