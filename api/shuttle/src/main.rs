@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use axum::{extract::State, routing::get, Router};
+use axum::{routing::get, Router};
 use shuttle_runtime::CustomError;
 use shuttle_shared_db::Postgres;
 use sqlx::Executor;
@@ -14,14 +14,6 @@ async fn main(#[Postgres] pool: sqlx::PgPool) -> shuttle_axum::ShuttleAxum {
         .map_err(CustomError::new)?;
 
     let state = Arc::new(pool);
-    let router = Router::new().route("/version", get(version)).with_state(state);
+    let router = Router::new().route("/version", get(api_lib::version)).with_state(state);
     Ok(router.into())
-}
-
-async fn version(State(pool): State<Arc<sqlx::PgPool>>) -> String {
-    tracing::info!("Getting version");
-    sqlx::query_scalar::<sqlx::Postgres, String>("SELECT version()")
-        .fetch_one(pool.as_ref())
-        .await
-        .unwrap_or_else(|err| format!("Error: {:?}", err))
 }
