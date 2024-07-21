@@ -17,3 +17,4 @@ sqlx = { version = "0.7.4", features = [
     "json",
 ] }
 tokio = "1.28.2"
+tracing = "0.1.40"

@@ -8,6 +8,7 @@ use sqlx::Executor;
 #[shuttle_runtime::main]
 async fn main(#[Postgres] pool: sqlx::PgPool) -> shuttle_axum::ShuttleAxum {
     // initialize the database if not already initialized
+    tracing::info!("Migrating database");
     pool.execute(include_str!("../../db/schema.sql"))
         .await
         .map_err(CustomError::new)?;
@@ -18,6 +19,7 @@ async fn main(#[Postgres] pool: sqlx::PgPool) -> shuttle_axum::ShuttleAxum {
 }
 
 async fn version(State(pool): State<Arc<sqlx::PgPool>>) -> String {
+    tracing::info!("Getting version");
     sqlx::query_scalar::<sqlx::Postgres, String>("SELECT version()")
         .fetch_one(pool.as_ref())
         .await
